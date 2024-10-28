@@ -16,6 +16,15 @@ export class UserService {
     return this.http.get<IUserResponse >(`${this.apiUrl}/${page}/${limit}`);
   }
 
+  login(usuario: string, password: string) {
+    const body = { usuario, password }
+    return this.http.post<IUserResponse>(`${this.apiUrl}/login`, body);
+  }
+
+  register(usuario: IUser): Observable<{ user: IUser }> {
+    return this.http.post<{ user:IUser }>(`${this.apiUrl}/register`, usuario)
+  }
+
   // Agregar un nuevo usuario
   addUser(usuario: IUser): Observable<{ user: IUser }> {
     return this.http.post<{ user: IUser }>(this.apiUrl, usuario);
