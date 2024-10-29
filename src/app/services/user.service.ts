@@ -16,10 +16,10 @@ export class UserService {
     return this.http.get<IUserResponse >(`${this.apiUrl}/${page}/${limit}`);
   }
 
-  login(usuario: string, password: string) {
-    const body = { usuario, password }
+  login(username: string, password: string) { // Cambié 'usuario' a 'username'
+    const body = { username, password } // Cambié 'usuario' a 'username' en el objeto 'body'
     return this.http.post<IUserResponse>(`${this.apiUrl}/login`, body);
-  }
+  }  
 
   register(usuario: IUser): Observable<{ user: IUser }> {
     return this.http.post<{ user:IUser }>(`${this.apiUrl}/register`, usuario)

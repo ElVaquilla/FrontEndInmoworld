@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
+import { Router } from '@angular/router';
 import { IUser, IUserResponse } from '../../models/user.model';
 
 @Component({
@@ -19,7 +20,7 @@ export class LoginComponent {
   isRegisterMode: boolean = false;
   submitted: boolean = false;
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private router: Router) {}
 
   toggleMode() {
     this.isRegisterMode = !this.isRegisterMode;
@@ -45,7 +46,16 @@ export class LoginComponent {
 
   onLoginSubmit() {
     if (this.username && this.password) {
-      this.userService.login(this.username, this.password);
+      this.userService.login(this.username, this.password).subscribe(
+        (response: IUserResponse) => {
+          if (response) { // Verifica si hay una respuesta de login exitosa
+            this.router.navigate(['/home']); // Navega a '/other' después de login
+          }
+        },
+        error => {
+          alert('Error en el inicio de sesión'); // Manejo de errores
+        }
+      );
     } else {
       alert('Todos los campos son obligatorios');
     }
@@ -59,10 +69,13 @@ export class LoginComponent {
     if (this.username && this.email && this.password) {
       const nuevoUser: IUser = {
         name: this.username,
-        email: this.email, // Añadir el campo email
+        email: this.email,
         password: this.password,
       };
-      this.userService.register(nuevoUser);
+      this.userService.register(nuevoUser).subscribe(
+        response => alert('Usuario registrado exitosamente'),
+        error => alert('Error en el registro')
+      );
     } else {
       alert('Todos los campos son obligatorios');
     }
