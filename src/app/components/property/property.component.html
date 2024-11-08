@@ -37,7 +37,7 @@
   <div class="property-list">
     <h1>Lista de Properties</h1>
     <ul>
-      <li *ngFor="let property of properties; let i = index">
+      <li *ngFor="let property of properties| paginate: { itemsPerPage: limit, currentPage: page, totalItems: total }; let i = index">
         <h3>Propietario: {{ getUserNameById(property.owner) }}</h3>
         <!-- <p>Descripción: {{ property.description | truncate: 60}}</p> -->
         <p>Dirección: {{ property.address}}</p>
@@ -47,6 +47,10 @@
         <!-- Botón para modificar una propiedad -->
         <button (click)="prepararEdicion(property, i)" class="modificar">Modificar</button>
       </li>
+      <pagination-controls (pageChange)="handlePageChange($event)" nextLabel="Next" previousLabel="Previous"></pagination-controls>
+      <div class="mt-3">  Items per Page: <select (change)="handleLimitChange($event)"><option *ngFor="let limitUser of limitProperties" [value]="limitUser">{{ limitUser }}</option> </select>
+      </div>
     </ul>
+    
   </div>
 </div>

@@ -1,7 +1,7 @@
 import { Component, OnInit , Output, Input, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';  // Import FormsModule y NgForm para manejar el formulario
-import { IUser,IUserResponse } from '../../models/user.model'; // Importar el modelo User desde la subcarpeta services
+import { IUser } from '../../models/user.model'; // Importar el modelo User desde la subcarpeta services
 import { UserService } from '../../services/user.service'; // Importar el servicio UserService desde la subcarpeta services
 import { TruncatePipe } from '../../pipes/truncate.pipe';
 import { MaskEmailPipe } from '../../pipes/maskEmail.pipe';
@@ -25,9 +25,9 @@ export class UserComponent implements OnInit {
   desplegado: boolean[] = []; // Controla si el desplegable de cada usuario está abierto o cerrado
   mostrarPassword: boolean[] = []; // Array para controlar la visibilidad de la contraseña
   @Input() totalUsers:any;
-@Input()currentPage:any;
-@Input()limit:any=2;
-@Input()total:any;
+@Input() currentPage:any;
+@Input() limit:any=2;
+@Input() total:any;
   @Output()
   pageChange!: EventEmitter<number>;
 totalPages:any;
@@ -42,6 +42,7 @@ totalPages:any;
   count:number=0;
   page: number=1 ;
   limitUsers = [2,3, 6, 9];
+  user:any
 
   confirmarPassword: string = ''; // Campo para confirmar la contraseña
   userEdicion: IUser | null = null; // Usuario en proceso de edición
@@ -52,15 +53,22 @@ totalPages:any;
 
   ngOnInit(): void {
     // Cargar usuarios desde el UserService
-    this.userService.getUsers(this.page, this.limit)
-      .subscribe(data => {
-        this.users = data.users;          // Lista de usuarios
-        this.totalUsers = data.totalUsers; // Total de usuarios
-        this.totalPages = data.totalPages; // Total de páginas
-        this.desplegado = new Array(this.users.length).fill(false);
-      }, error => {
-        console.error('Error al obtener los usuarios', error);
-      });
+ 
+    this.userService.getUsers(this.page, this.limit).subscribe (users =>{
+      console.log("users",users);
+    this.user=users;
+    this.totalPages=this.user.totalPages;
+    this.total=this.user.totalUser;
+    this.users=this.user.users
+      
+      //this.count=users.totalPages;
+      //this.totalUsers=users.totalUsers;
+      console.log("paginas:",this.count,this.page);
+      console.log("Todos los usuarios",this.total,this.user.totalUsers);
+      console.log("estoy dentro",this.users);
+      
+    
+    })
   }
 
   handlePageChange(event: number): void {

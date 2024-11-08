@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { IUser, IUserResponse } from '../models/user.model';
+import { IUser} from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +12,8 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   // Obtener todos los usuarios
-  getUsers(page: Number, limit: Number  ): Observable<IUserResponse> {
-    return this.http.get<IUserResponse >(`${this.apiUrl}/${page}/${limit}`);
+  getUsers(page: Number, limit: Number  ): Observable<IUser[]> {
+    return this.http.get<IUser[] >(`${this.apiUrl}/${page}/${limit}`);
   }
 
   login(username: string, password: string) { // Cambié 'usuario' a 'username'

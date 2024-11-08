@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { IProperty, IPropertyResponse } from '../models/property.model';
+import { IProperty } from '../models/property.model';
 import { IUser } from '../models/user.model';
 
 @Injectable({
@@ -13,8 +13,8 @@ export class PropertyService {
   constructor(private http: HttpClient) {}
 
   // Obtener la lista
-  getProperty(page: Number, limit: Number): Observable<IPropertyResponse> {
-    return this.http.get<IPropertyResponse>(`${this.apiUrl}/${page}/${limit}`);
+  getProperty(page: Number, limit: Number): Observable<IProperty[]> {
+    return this.http.get<IProperty[]>(`${this.apiUrl}/${page}/${limit}`);
   }
 
   // Agregar una nueva al backend

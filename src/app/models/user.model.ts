@@ -4,13 +4,10 @@ export interface IUser {
   email: string;     // Añadir el campo email
   password: string;
   property?: string[];    // Este campo es la "Property"
+ 
+
   
 }
 
-export interface IUserResponse{
-  users: IUser[];
-  totalUsers: number;
-  totalPages: number;
 
-}
 
