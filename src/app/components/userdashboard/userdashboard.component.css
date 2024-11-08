@@ -1,0 +1,149 @@
+/* Estilos generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #FAF3E0; /* Fondo blanco roto */
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Contenedor principal */
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    margin: 20px auto;
+  }
+  
+  /* Encabezado del usuario */
+  h2 {
+    color: #003366; /* Azul oscuro */
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+  }
+  
+  h3 {
+    color: #FAF3E0;
+    font-size: 1.8rem;
+  }
+  
+  /* Información del usuario */
+  .user-info p {
+    color: #4C0000; /* Rojo oscuro */
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+  }
+  
+  /* Lista de propiedades */
+  .property-list {
+    background-color: #002244; /* Azul oscuro */
+    color: #FAF3E0; /* Texto blanco roto */
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    width: 80%;
+    margin-top: 20px;
+    text-align: left;
+  }
+  
+  .property-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .property-list li {
+    background-color: #8B0000; /* Rojo vino */
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .property-list li p,
+  .property-list li h4 {
+    margin: 5px 0;
+  }
+  
+  /* Formulario de edición y adición */
+  .edit-user-form, .add-property-form {
+    background-color: #003366; /* Azul oscuro */
+    color: #FAF3E0;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 350px;
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .edit-user-form h3, .add-property-form h3 {
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+  }
+  
+  /* Estilos para los inputs y textareas */
+  input[type="text"],
+  input[type="password"],
+  textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 2px solid #4C0000; /* Bordes rojo oscuro */
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  
+  textarea {
+    height: 100px;
+    resize: none; /* Evitar redimensionado */
+  }
+  
+  input:focus,
+  textarea:focus {
+    border-color: #4CAF50; /* Verde hoja en foco */
+  }
+  
+  /* Botones */
+  button {
+    background-color: #002244; /* Azul oscuro */
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 25px;
+    margin-top: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  button:hover {
+    background-color: #001122; /* Azul más oscuro en hover */
+  }
+  
+  button[type="submit"] {
+    margin-top: 15px;
+  }
+  
+  /* Mensajes de validación */
+  .character-limit, .error-message {
+    display: block;
+    font-size: 0.8rem;
+    color: #FFA07A; /* Naranja claro */
+    margin-top: -5px;
+  }
+  
+  .error-message {
+    color: #ff4c4c;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
+  /* Ocultar formularios inicialmente */
+  .edit-user-form, .add-property-form {
+    display: none; /* Cambiará con lógica de visibilidad en Angular */
+  }
+  

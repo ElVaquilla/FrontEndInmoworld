@@ -9,5 +9,11 @@ export interface IUser {
   
 }
 
+export interface IUserResponse{
+  users: IUser[];
+  totalUsers: number;
+  totalPages: number;
+  message: string;
 
+}
 

@@ -8,6 +8,7 @@ import { ConfirmationModalComponent } from './components/confirmation-modal/conf
 import { FormsModule } from '@angular/forms'; 
 import { CommonModule } from '@angular/common'; 
 import { LoginComponent } from './components/login/login.component';
+import { UserdashboardComponent } from './components/userdashboard/userdashboard.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' }, 
@@ -15,6 +16,7 @@ export const routes: Routes = [
   { path: 'user', component: UserComponent },
   { path: 'property', component: PropertyComponent },
   { path: 'confirmation-modal', component: ConfirmationModalComponent },
+  { path: 'userdashboard', component: UserdashboardComponent},
   { path: 'login', component: LoginComponent},
   { path: '**', redirectTo: 'login' } 
 ];

@@ -48,8 +48,10 @@ export class LoginComponent {
     if (this.username && this.password) {
       this.userService.login(this.username, this.password).subscribe(
         (response: IUserResponse) => {
-          if (response) { // Verifica si hay una respuesta de login exitosa
+          if (response.message === 'Admin') { // Verifica si hay una respuesta de login exitosa
             this.router.navigate(['/home']); // Navega a '/other' después de login
+          } else {
+            this.router.navigate(['userdashboard'])
           }
         },
         error => {
