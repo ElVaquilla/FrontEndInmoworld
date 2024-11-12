@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { IUser, IUserResponse} from '../models/user.model';
+import { IUser, IUserResponse } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,18 +11,27 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  // Obtener todos los usuarios
-  getUsers(page: Number, limit: Number  ): Observable<IUser[]> {
-    return this.http.get<IUser[] >(`${this.apiUrl}/${page}/${limit}`);
+  getApiUrl() {
+    return this.apiUrl; // Método para obtener apiUrl 
   }
 
-  login(username: string, password: string) { // Cambié 'usuario' a 'username'
-    const body = { username, password } // Cambié 'usuario' a 'username' en el objeto 'body'
+  // Obtener todos los usuarios
+  getUsers(page: number, limit: number): Observable<IUser[]> {
+    return this.http.get<IUser[]>(`${this.apiUrl}/${page}/${limit}`);
+  }
+
+  // Obtener un usuario por su ID
+  getUserById(id: string): Observable<IUser> {
+    return this.http.get<IUser>(`${this.apiUrl}/${id}`);
+  }
+
+  login(username: string, password: string): Observable<IUserResponse> {
+    const body = { username, password };
     return this.http.post<IUserResponse>(`${this.apiUrl}/login`, body);
   }  
 
   register(usuario: IUser): Observable<{ user: IUser }> {
-    return this.http.post<{ user:IUser }>(`${this.apiUrl}/register`, usuario)
+    return this.http.post<{ user: IUser }>(`${this.apiUrl}/register`, usuario);
   }
 
   // Agregar un nuevo usuario
@@ -31,7 +40,7 @@ export class UserService {
   }  
 
   // Actualizar un usuario existente
-  updateUser(usuario: IUser): Observable<IUser > {
+  updateUser(usuario: IUser): Observable<IUser> {
     return this.http.put<IUser>(`${this.apiUrl}/${usuario._id}`, usuario);
   }
 
@@ -39,6 +48,24 @@ export class UserService {
   deleteUserById(id: string): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
+
+  // Establecer el usuario actual (para simplificar la autenticación)
+  setUser(user: any) {
+    localStorage.setItem('currentUser', JSON.stringify(user));
+  }
+
+  // Obtener el usuario actual
+  getUser(): any {
+    const user = localStorage.getItem('currentUser');
+    return user ? JSON.parse(user) : null;
+  }
+  // Eliminar el usuario actual del almacenamiento local 
+  clearUser() { 
+    localStorage.removeItem('currentUser');
+  }
 }
+
+
+
 
 

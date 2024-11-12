@@ -23,7 +23,7 @@ body {
   }
   
   h3 {
-    color: #FAF3E0;
+    color: #003366; /* Ajustado para mejorar la visibilidad */ 
     font-size: 1.8rem;
   }
   
@@ -140,10 +140,5 @@ body {
     color: #ff4c4c;
     font-weight: bold;
     margin-top: 10px;
-  }
-  
-  /* Ocultar formularios inicialmente */
-  .edit-user-form, .add-property-form {
-    display: none; /* Cambiará con lógica de visibilidad en Angular */
   }
   

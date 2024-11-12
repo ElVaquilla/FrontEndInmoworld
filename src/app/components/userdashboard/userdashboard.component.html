@@ -1,57 +1,58 @@
 <div class="user-info">
-    <h2>Información del Usuario</h2>
-    <p><strong>Nombre de Usuario:</strong> {{ username }}</p>
+  <h2>Información del Usuario</h2>
+  <p><strong>Nombre de Usuario:</strong> {{ username }}</p>
+  <p><strong>Email:</strong> {{ email }}</p> <!-- Añadir el email -->
   
-    <h3>Propiedades:</h3>
-    <ul>
-      <li *ngFor="let property of properties">
-        <p><strong>Dirección:</strong> {{ property.address }}</p>
-        <p><strong>Descripción:</strong> {{ property.description }}</p>
-      </li>
-    </ul>
+  <h3>Propiedades:</h3>
+  <ul>
+    <li *ngFor="let property of properties">
+      <p><strong>Dirección:</strong> {{ property.address }}</p>
+      <p><strong>Descripción:</strong> {{ property.description }}</p>
+    </li>
+  </ul>
   
-    <!-- Botón para mostrar el formulario de modificación -->
-    <button (click)="toggleEditUser()">Modificar Usuario</button>
+  <button (click)="toggleEditUser()">Modificar Usuario</button>
   
-    <!-- Formulario para modificar el nombre de usuario y la contraseña -->
-    <div *ngIf="editUser" class="edit-user-form">
-      <h3>Modificar Usuario</h3>
-      <form (ngSubmit)="updateUser()">
-        <label>
-          Nuevo Nombre de Usuario:
-          <input type="text" [(ngModel)]="newUsername" name="newUsername" required />
-        </label>
-        <label>
-          Nueva Contraseña:
-          <input type="password" [(ngModel)]="newPassword" name="newPassword" required />
-        </label>
-        <label>
-          Confirmar Contraseña:
-          <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" required />
-        </label>
-        <button type="submit">Guardar Cambios</button>
-        <button type="button" (click)="cancelEditUser()">Cancelar</button>
-      </form>
-    </div>
-  
-    <!-- Botón para mostrar el formulario de añadir nueva propiedad -->
-    <button (click)="toggleAddProperty()">Añadir Nueva Propiedad</button>
-  
-    <!-- Formulario para añadir una nueva propiedad -->
-    <div *ngIf="addProperty" class="add-property-form">
-      <h3>Añadir Nueva Propiedad</h3>
-      <form (ngSubmit)="addNewProperty()">
-        <label>
-          Dirección:
-          <input type="text" [(ngModel)]="newProperty.address" name="address" required />
-        </label>
-        <label>
-          Descripción:
-          <input type="text" [(ngModel)]="newProperty.description" name="description" required />
-        </label>
-        <button type="submit">Añadir Propiedad</button>
-        <button type="button" (click)="cancelAddProperty()">Cancelar</button>
-      </form>
-    </div>
+  <!-- Formulario para modificar el nombre de usuario y la contraseña -->
+  <div *ngIf="editUser" class="edit-user-form">
+    <h3>Modificar Usuario</h3>
+    <form (ngSubmit)="updateUser()">
+      <label>
+        Nuevo Nombre de Usuario:
+        <input type="text" [(ngModel)]="newUsername" name="newUsername" required />
+      </label>
+      <label>
+        Nueva Contraseña:
+        <input type="password" [(ngModel)]="newPassword" name="newPassword" required />
+      </label>
+      <label>
+        Confirmar Contraseña:
+        <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" required />
+      </label>
+      <button type="submit">Guardar Cambios</button>
+      <button type="button" (click)="cancelEditUser()">Cancelar</button>
+    </form>
   </div>
+    
+  <button (click)="toggleAddProperty()">Añadir Nueva Propiedad</button>
   
+  <!-- Formulario para añadir una nueva propiedad -->
+  <div *ngIf="addProperty" class="add-property-form">
+    <h3>Añadir Nueva Propiedad</h3>
+    <form (ngSubmit)="addNewProperty()">
+      <label>
+        Dirección:
+        <input type="text" [(ngModel)]="newProperty.address" name="address" required />
+      </label>
+      <label>
+        Descripción:
+        <input type="text" [(ngModel)]="newProperty.description" name="description" required />
+      </label>
+      <button type="submit">Añadir Propiedad</button>
+      <button type="button" (click)="cancelAddProperty()">Cancelar</button>
+    </form>
+  </div>
+
+  <!-- Botón para eliminar la cuenta -->
+  <button (click)="deleteUser()">Eliminar Cuenta</button>
+</div>

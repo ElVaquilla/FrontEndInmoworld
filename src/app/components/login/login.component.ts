@@ -47,21 +47,34 @@ export class LoginComponent {
   onLoginSubmit() {
     if (this.username && this.password) {
       this.userService.login(this.username, this.password).subscribe(
-        (response: IUserResponse) => {
-          if (response.message === 'Admin') { // Verifica si hay una respuesta de login exitosa
-            this.router.navigate(['/home']); // Navega a '/other' después de login
+        (response: any) => {
+          console.log("Respuesta del servidor:", response);  // Log para depuración
+          if (response.data) { // Verifica si hay datos de usuario en la respuesta
+            const user = response.data; // Obtén los datos del usuario
+            this.userService.setUser(user);  // Guarda el usuario en localStorage
+            
+            // Navega según el tipo de usuario
+            if (response.message === 'Admin') {
+              this.router.navigate(['/home']);
+            } else {
+              this.router.navigate(['userdashboard']);
+            }
           } else {
-            this.router.navigate(['userdashboard'])
+            alert('Usuario no encontrado');
           }
         },
         error => {
-          alert('Error en el inicio de sesión'); // Manejo de errores
+          console.error('Error en el inicio de sesión:', error);  // Log para errores
+          alert('Error en el inicio de sesión');
         }
       );
     } else {
       alert('Todos los campos son obligatorios');
     }
   }
+  
+  
+  
 
   onRegisterSubmit() {
     if (this.password !== this.confirmPassword) {
