@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
-import { IUser, IUserResponse } from '../../models/user.model';
+import { IUser } from '../../models/user.model';
 
 @Component({
   selector: 'app-login',
@@ -72,21 +72,33 @@ export class LoginComponent {
       alert('Todos los campos son obligatorios');
     }
   }
-  
-  
-  
 
   onRegisterSubmit() {
     if (this.password !== this.confirmPassword) {
       alert('Las contraseñas no coinciden');
       return;
     }
+    
     if (this.username && this.email && this.password) {
+      // Validación del formato del correo
+      const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+      if (!emailPattern.test(this.email)) {
+        alert('El formato del correo electrónico no es válido');
+        return;
+      }
+
+      // Validación de longitud de la contraseña
+      if (this.password.length < 7) {
+        alert('La contraseña debe tener al menos 7 caracteres');
+        return;
+      }
+
       const nuevoUser: IUser = {
         name: this.username,
         email: this.email,
         password: this.password,
       };
+
       this.userService.register(nuevoUser).subscribe(
         response => alert('Usuario registrado exitosamente'),
         error => alert('Error en el registro')
