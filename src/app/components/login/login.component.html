@@ -12,6 +12,9 @@
         [(ngModel)]="username"
         required
       />
+      <div *ngIf="form.controls['username']?.invalid && form.controls['username']?.touched" class="error-message">
+        El usuario es obligatorio.
+      </div>
     </div>
     
     <div *ngIf="isRegisterMode">
@@ -22,7 +25,12 @@
         name="email"
         [(ngModel)]="email"
         required
+        email
+        placeholder="Introduce un correo electrónico"
       />
+      <div *ngIf="form.controls['email'].invalid && form.controls['email'].touched" class="error-message">
+        {{ form.controls['email'].errors?.['required'] ? 'El correo electrónico es obligatorio.' : 'Formato de correo electrónico no válido.' }}
+      </div>
     </div>
 
     <div>
@@ -33,7 +41,12 @@
         name="password"
         [(ngModel)]="password"
         required
+        minlength="7"
+        placeholder="Introduce una contraseña"
       />
+      <div *ngIf="form.controls['password'].invalid && form.controls['password'].touched" class="error-message">
+        {{ form.controls['password'].errors?.['required'] ? 'La contraseña es obligatoria.' : 'La contraseña debe tener al menos 7 caracteres.' }}
+      </div>
     </div>
 
     <div *ngIf="isRegisterMode">
@@ -44,10 +57,15 @@
         name="confirmPassword"
         [(ngModel)]="confirmPassword"
         required
+        minlength="7"
+        placeholder="Confirma tu contraseña"
       />
+      <div *ngIf="confirmPassword !== password && confirmPassword.length > 0 && form.submitted" class="error-message">
+        Las contraseñas no coinciden.
+      </div>
     </div>
 
-    <button type="submit">
+    <button type="submit" [disabled]="form.invalid">
       {{ isRegisterMode ? 'Registrarse' : 'Iniciar Sesión' }}
     </button>
 
