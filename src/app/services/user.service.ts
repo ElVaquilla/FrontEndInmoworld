@@ -7,7 +7,7 @@ import { IUser, IUserResponse } from '../models/user.model';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = "http://localhost:3001/user";  // Usar apiUrl desde environment
+  private apiUrl = 'http://localhost:3001/user';  // Usar apiUrl desde environment
 
   constructor(private http: HttpClient) {}
 

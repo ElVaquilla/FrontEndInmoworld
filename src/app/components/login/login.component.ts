@@ -86,6 +86,7 @@ export class LoginComponent {
         name: this.username,
         email: this.email,
         password: this.password,
+        property: []
       };
       this.userService.register(nuevoUser).subscribe(
         response => alert('Usuario registrado exitosamente'),

@@ -1,58 +1,125 @@
-<div class="user-info">
-  <h2>Información del Usuario</h2>
-  <p><strong>Nombre de Usuario:</strong> {{ username }}</p>
-  <p><strong>Email:</strong> {{ email }}</p> <!-- Añadir el email -->
-  
-  <h3>Propiedades:</h3>
-  <ul>
-    <li *ngFor="let property of properties">
-      <p><strong>Dirección:</strong> {{ property.address }}</p>
-      <p><strong>Descripción:</strong> {{ property.description }}</p>
-    </li>
-  </ul>
-  
+<div class="user-dashboard">
+  <h1>Bienvenido, {{ username }}</h1>
+  <p><strong>Email:</strong> {{ email }}</p>
+
+  <!-- Lista de propiedades -->
+  <div class="property-list">
+    <h2>Propiedades</h2>
+    <ul *ngIf="properties.length > 0; else noProperties">
+      <li
+        *ngFor="let property of properties | paginate: { itemsPerPage: limit, currentPage: page, totalItems: totalProperties }; let i = index"
+      >
+        <h3>Dirección: {{ property.address }}</h3>
+        <p><strong>Descripción:</strong> {{ property.description }}</p>
+        <p><strong>Dueño:</strong> {{ username }}</p>
+
+        <!-- Botón para eliminar propiedad -->
+        <button *ngIf="property._id" (click)="deleteProperty(property._id)">Eliminar</button>
+
+        <!-- Botón para modificar propiedad -->
+        <button *ngIf="!editProperty || editPropertyIndex !== i" (click)="prepararEdicion(property, i)">Modificar</button>
+
+        <!-- Formulario para modificar propiedad -->
+        <div *ngIf="editProperty && editPropertyIndex === i" class="edit-property-form">
+          <form (ngSubmit)="updateProperty(i)">
+            <label for="editAddress{{ i }}">
+              Dirección:
+              <input
+                id="editAddress{{ i }}"
+                type="text"
+                [(ngModel)]="properties[i].address"
+                name="editAddress{{ i }}"
+                required
+              />
+            </label>
+            <label for="editDescription{{ i }}">
+              Descripción:
+              <input
+                id="editDescription{{ i }}"
+                type="text"
+                [(ngModel)]="properties[i].description"
+                name="editDescription{{ i }}"
+                required
+              />
+            </label>
+            <button type="submit">Guardar Cambios</button>
+            <button type="button" (click)="cancelEditProperty()">Cancelar</button>
+          </form>
+        </div>
+      </li>
+    </ul>
+
+    <!-- Plantilla alternativa si no hay propiedades -->
+    <ng-template #noProperties>
+      <p>No tienes propiedades registradas.</p>
+    </ng-template>
+
+    <!-- Controles de paginación -->
+    <pagination-controls
+      (pageChange)="handlePageChange($event)"
+      previousLabel="Anterior"
+      nextLabel="Siguiente"
+    ></pagination-controls>
+
+    <!-- Selector de elementos por página -->
+    <div class="items-per-page">
+      <label for="itemsPerPage">Propiedades por página:</label>
+      <select id="itemsPerPage" (change)="handleLimitChange($event)">
+        <option *ngFor="let limitOption of [5, 10, 20]" [value]="limitOption">
+          {{ limitOption }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Botón para modificar usuario -->
   <button (click)="toggleEditUser()">Modificar Usuario</button>
-  
-  <!-- Formulario para modificar el nombre de usuario y la contraseña -->
+
+  <!-- Formulario para modificar usuario -->
   <div *ngIf="editUser" class="edit-user-form">
-    <h3>Modificar Usuario</h3>
+    <h2>Modificar Usuario</h2>
     <form (ngSubmit)="updateUser()">
-      <label>
-        Nuevo Nombre de Usuario:
-        <input type="text" [(ngModel)]="newUsername" name="newUsername" required />
+      <label for="newUsername">
+        Nuevo Nombre:
+        <input id="newUsername" type="text" [(ngModel)]="newUsername" name="newUsername" required />
       </label>
-      <label>
+      <label for="newPassword">
         Nueva Contraseña:
-        <input type="password" [(ngModel)]="newPassword" name="newPassword" required />
+        <input id="newPassword" type="password" [(ngModel)]="newPassword" name="newPassword" required />
       </label>
-      <label>
+      <label for="confirmPassword">
         Confirmar Contraseña:
-        <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" required />
+        <input id="confirmPassword" type="password" [(ngModel)]="confirmPassword" name="confirmPassword" required />
       </label>
       <button type="submit">Guardar Cambios</button>
       <button type="button" (click)="cancelEditUser()">Cancelar</button>
     </form>
   </div>
-    
+
+  <!-- Botón para añadir nueva propiedad -->
   <button (click)="toggleAddProperty()">Añadir Nueva Propiedad</button>
-  
-  <!-- Formulario para añadir una nueva propiedad -->
+
+  <!-- Formulario para añadir nueva propiedad -->
   <div *ngIf="addProperty" class="add-property-form">
-    <h3>Añadir Nueva Propiedad</h3>
+    <h2>Añadir Nueva Propiedad</h2>
     <form (ngSubmit)="addNewProperty()">
-      <label>
+      <label for="address">
         Dirección:
-        <input type="text" [(ngModel)]="newProperty.address" name="address" required />
+        <input id="address" type="text" [(ngModel)]="newProperty.address" name="address" required />
       </label>
-      <label>
+      <label for="owner">
+        Dueño:
+        <input id="owner" type="text" [value]="username" name="owner" readonly />
+      </label>
+      <label for="description">
         Descripción:
-        <input type="text" [(ngModel)]="newProperty.description" name="description" required />
+        <input id="description" type="text" [(ngModel)]="newProperty.description" name="description" required />
       </label>
       <button type="submit">Añadir Propiedad</button>
       <button type="button" (click)="cancelAddProperty()">Cancelar</button>
     </form>
   </div>
 
-  <!-- Botón para eliminar la cuenta -->
-  <button (click)="deleteUser()">Eliminar Cuenta</button>
+  <!-- Botón para eliminar usuario -->
+  <button class="delete-user" (click)="deleteUser()">Eliminar Cuenta</button>
 </div>

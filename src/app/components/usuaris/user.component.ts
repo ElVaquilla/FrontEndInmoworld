@@ -36,6 +36,7 @@ totalPages:any;
     name: '',
     email: '', // Añadir el campo email
     password: '',
+    property: []
   };
   
 
@@ -111,6 +112,7 @@ totalPages:any;
         name: this.nuevoUser.name,
         email: this.nuevoUser.email,
         password: this.nuevoUser.password,
+        property: this.nuevoUser.property,
       };
   
       // Enviar el usuario a la API a través del UserService
@@ -134,6 +136,7 @@ totalPages:any;
       name: '',
       email: '', // Limpiar el campo email
       password: '',
+      property: []
     };
     this.confirmarPassword = ''; // Reiniciar el campo de confirmar contraseña
     this.formSubmitted = false; // Restablecer el estado del formulario para no mostrar errores
