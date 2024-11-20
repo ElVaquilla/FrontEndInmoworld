@@ -91,17 +91,40 @@ totalPages:any;
   
     // Verificar si las contraseñas coinciden
     if (this.nuevoUser.password !== this.confirmarPassword) {
-      alert('Las contraseñas no coinciden. Por favor, inténtalo de nuevo.');
+      const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+        width: '350px',
+        data: { 
+          titulo: 'Error',
+          mensaje: 'Las contraseñas no coinciden. Por favor, inténtalo de nuevo.',
+          confirmable: false // Solo un botón de "Cerrar"
+        }
+      });
       return;
     }
   
     if (this.indiceEdicion !== null) {
-      // Estamos en modo edición, modificar el usuario existente
+      // Modo edición, modificar el usuario existente
       this.users[this.indiceEdicion] = { ...this.nuevoUser, _id: this.users[this.indiceEdicion]._id };
   
       // Actualizar el usuario en la API
       this.userService.updateUser(this.users[this.indiceEdicion]).subscribe(response => {
         console.log('Usuario actualizado:', response);
+  
+        // Mostrar el modal de confirmación con botones "Cancelar" y "Confirmar"
+        const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+          width: '350px',
+          data: { 
+            mensaje: 'El usuario se ha actualizado correctamente.',
+            confirmable: true // Modo de edición, con botones de confirmación
+          }
+        });
+  
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            // Confirmar la acción y limpiar el formulario
+            this.resetForm(userForm);
+          }
+        });
       });
   
       // Limpiar el estado de edición
@@ -118,16 +141,30 @@ totalPages:any;
       // Enviar el usuario a la API a través del UserService
       this.userService.addUser(userJSON).subscribe(response => {
         console.log('Usuario agregado:', response);
-        
+  
         // Agregar el usuario con el _id generado por la API al array de usuarios en el frontend
         this.users.push({ ...userJSON, _id: response.user._id });
         this.desplegado.push(false); // Añadir un nuevo estado de desplegado
+  
+        // Mostrar modal de éxito con solo un botón de "Cerrar"
+        const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+          width: '350px',
+          data: { 
+            mensaje: 'El usuario se ha creado correctamente.',
+            confirmable: false // Solo un botón de "Cerrar"
+          }
+        });
+  
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            // Limpiar el formulario
+            this.resetForm(userForm);
+          }
+        });
       });
     }
-  
-    // Limpiar los campos del formulario y restablecer su estado
-    this.resetForm(userForm);
   }
+  
   
 
   // Función para limpiar el formulario
@@ -159,39 +196,65 @@ totalPages:any;
     // Verificar si el usuario y su ID son válidos
     if (!userAEliminar || typeof userAEliminar._id !== 'string') {
       console.error('El usuario no tiene un _id válido. No se puede eliminar.');
-      alert('El usuario no se puede eliminar porque no está registrado en la base de datos.');
-      return;
-    }    
+      const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+        width: '350px',
+        data: { 
+          titulo: 'Error',
+          mensaje: 'El usuario no se puede eliminar porque no está registrado en la base de datos.',
+          confirmable: false // Solo un botón "Cerrar"
+        }
+      });
   
-    // Mostrar el diálogo de confirmación
+      return;
+    }
+  
+    // Mostrar el diálogo de confirmación con botones de "Confirmar" y "Cancelar"
     const dialogRef = this.dialog.open(ConfirmationModalComponent, {
       width: '350px',
-      data: { mensaje: `¿Estás seguro de que deseas eliminar a ${userAEliminar.name}?` }
+      data: { 
+        mensaje: `¿Estás seguro de que deseas eliminar a ${userAEliminar.name}?`,
+        confirmable: true // Esto asegura que se muestren los botones "Cancelar" y "Confirmar"
+      }
     });
   
     // Suscribirse al cierre del diálogo
     dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          if (userAEliminar && typeof userAEliminar._id === 'string') {
-            this.userService.deleteUserById(userAEliminar._id).subscribe(
-              response => {
-                console.log('Usuario eliminado:', response);
-                this.users.splice(index, 1);
-                this.desplegado.splice(index, 1);
-              },
-              error => {
-                console.error('Error al eliminar el usuario:', error);
-                alert('Error al eliminar el usuario. Por favor, inténtalo de nuevo.');
-              }
-            );
-          } else {
-            console.error('El usuario no tiene un _id válido. No se puede eliminar.');
-            alert('El usuario no se puede eliminar porque no está registrado en la base de datos.');
-          }
+      if (result) {
+        // Si se confirma la eliminación
+        if (userAEliminar && typeof userAEliminar._id === 'string') {
+          this.userService.deleteUserById(userAEliminar._id).subscribe(
+            response => {
+              console.log('Usuario eliminado:', response);
+              this.users.splice(index, 1); // Eliminar el usuario de la lista
+              this.desplegado.splice(index, 1); // Eliminar el estado de desplegado
+            },
+            error => {
+              console.error('Error al eliminar el usuario:', error);
+              const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+                width: '350px',
+                data: { 
+                  titulo: 'Error',
+                  mensaje: 'Error al eliminar el usuario. Por favor, inténtalo de nuevo.',
+                  confirmable: false // Solo un botón "Cerrar"
+                }
+              });
+            }
+          );
+        } else {
+          console.error('El usuario no tiene un _id válido. No se puede eliminar.');
+          const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+            width: '350px',
+            data: { 
+              titulo: 'Error',
+              mensaje: 'El usuario no se puede eliminar porque no está registrado en la base de datos.',
+              confirmable: false // Solo un botón "Cerrar"
+            }
+          });
         }
       }
-    );
+    });
   }
+  
   
 
   // Función para alternar la visualización del desplegable

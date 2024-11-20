@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
 import { IUser } from '../../models/user.model';
+import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-modal.component';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +22,7 @@ export class LoginComponent {
   isRegisterMode: boolean = false;
   submitted: boolean = false;
 
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(private userService: UserService, private router: Router, private dialog: MatDialog) {}
 
   toggleMode() {
     this.isRegisterMode = !this.isRegisterMode;
@@ -43,69 +45,76 @@ export class LoginComponent {
       this.onLoginSubmit();
     }
   }
+ 
 
   onLoginSubmit() {
     if (this.username && this.password) {
       this.userService.login(this.username, this.password).subscribe(
         (response: any) => {
-          console.log("Respuesta del servidor:", response);  // Log para depuración
-          if (response.data) { // Verifica si hay datos de usuario en la respuesta
-            const user = response.data; // Obtén los datos del usuario
-            this.userService.setUser(user);  // Guarda el usuario en localStorage
-            
-            // Navega según el tipo de usuario
-            if (response.message === 'Admin') {
-              this.router.navigate(['/home']);
-            } else {
-              this.router.navigate(['userdashboard']);
-            }
+          if (response.data) {
+            const user = response.data;
+            this.userService.setUser(user);
+  
+            // Navegar al dashboard según el rol
+            const route = response.message === 'Admin' ? '/home' : 'userdashboard';
+            this.router.navigate([route]);
+  
+            // Mostrar modal de éxito
+            this.dialog.open(ConfirmationModalComponent, {
+              data: {
+                mensaje: '¡Inicio de sesión exitoso! Bienvenido.'
+              }
+            });
           } else {
-            alert('Usuario no encontrado');
+            this.showErrorModal('Usuario no encontrado.');
           }
         },
-        error => {
-          console.error('Error en el inicio de sesión:', error);  // Log para errores
-          alert('Error en el inicio de sesión');
-        }
+        error => this.showErrorModal('Error en el inicio de sesión.')
       );
     } else {
-      alert('Todos los campos son obligatorios');
+      this.showErrorModal('Todos los campos son obligatorios.');
     }
   }
-
+  
   onRegisterSubmit() {
     if (this.password !== this.confirmPassword) {
-      alert('Las contraseñas no coinciden');
+      this.showErrorModal('Las contraseñas no coinciden.');
       return;
     }
-    
+  
     if (this.username && this.email && this.password) {
-      // Validación del formato del correo
-      const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-      if (!emailPattern.test(this.email)) {
-        alert('El formato del correo electrónico no es válido');
-        return;
-      }
-
-      // Validación de longitud de la contraseña
-      if (this.password.length < 7) {
-        alert('La contraseña debe tener al menos 7 caracteres');
-        return;
-      }
-
-      const nuevoUser: IUser = {
+      const nuevoUser = {
         name: this.username,
         email: this.email,
         password: this.password,
         property: []
       };
-
+  
       this.userService.register(nuevoUser).subscribe(
-        response => alert('Usuario registrado exitosamente'),
-        error => alert('Error en el registro')
+        () => {
+          // Mostrar modal de éxito
+          this.dialog.open(ConfirmationModalComponent, {
+            data: {
+              mensaje: '¡Usuario registrado exitosamente!'
+            }
+          });
+          this.clearForm();
+        },
+        () => this.showErrorModal('Error en el registro.')
       );
     } else {
-      alert('Todos los campos son obligatorios');
+      this.showErrorModal('Todos los campos son obligatorios.');
     }
   }
+  
+  // Método para mostrar errores
+  showErrorModal(message: string) {
+    this.dialog.open(ConfirmationModalComponent, {
+      data: {
+        mensaje: message
+      }
+    });
+  }
+ 
+
 }

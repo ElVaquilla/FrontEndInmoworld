@@ -115,25 +115,50 @@ export class UserdashboardComponent implements OnInit {
 
   updateUser() {
     if (this.newPassword !== this.confirmPassword) {
-      alert('Las contraseñas no coinciden');
+      const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+        width: '350px',
+        data: { 
+          titulo: 'Error',
+          mensaje: 'Las contraseñas no coinciden.',
+          confirmable: false
+        }
+      });
+      
       return;
     }
-
+  
     const updatedUser: IUser = {
       ...this.user,
       name: this.newUsername,
-      password: this.newPassword,
+      password: this.newPassword
     };
-
+  
     this.userService.updateUser(updatedUser).subscribe(
-      (response) => {
-        console.log('Usuario actualizado:', response);
-        this.username = this.newUsername;
-        this.cancelEditUser();
+      () => {
+        const successDialog = this.dialog.open(ConfirmationModalComponent, {
+          width: '350px',
+          data: {
+            titulo: 'Usuario actualizado',
+            mensaje: 'Tus datos han sido actualizados correctamente.',
+            confirmable: false // Solo botón de cerrar
+          }
+        });
+  
+        successDialog.afterClosed().subscribe(() => {
+          this.username = this.newUsername;
+          this.cancelEditUser();
+        });
       },
-      (error) => {
+      error => {
         console.error('Error al actualizar el usuario:', error);
-        alert('No se pudo actualizar el usuario. Intenta nuevamente.');
+        const errorDialog = this.dialog.open(ConfirmationModalComponent, {
+          width: '350px',
+          data: {
+            titulo: 'Error',
+            mensaje: 'Hubo un error al intentar actualizar tus datos. Por favor, inténtalo nuevamente.',
+            confirmable: false // Solo botón de cerrar
+          }
+        });
       }
     );
   }
@@ -148,30 +173,61 @@ export class UserdashboardComponent implements OnInit {
   deleteUser() {
     const user = this.userService.getUser();
     if (!user) {
-      alert('No se encontró el usuario');
+      const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+        width: '350px',
+        data: { 
+          titulo: 'Error',
+          mensaje: 'No se encontró el usuario',
+          confirmable: false
+        }
+      });
+      
       return;
     }
+  
     // Mostrar el diálogo de confirmación
     const dialogRef = this.dialog.open(ConfirmationModalComponent, {
       width: '350px',
-      data: { mensaje: `¿Estás seguro de que deseas eliminar a ${user.name}?` }
+      data: {
+        titulo: 'Eliminar cuenta',
+        mensaje: `¿Estás seguro de que deseas eliminar tu cuenta, ${user.name}?`,
+        confirmable: true // Con opciones de Confirmar y Cerrar
+      }
     });
-
+  
     // Suscribirse al cierre del diálogo
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-      this.userService.deleteUserById(user._id).subscribe(response => {
-          alert('Cuenta eliminada correctamente');
-          this.userService.setUser(null); // Eliminar el usuario de localStorage
-          this.router.navigate(['/']); // Redirigir a la página de inicio
-        }, error => {
-          console.error(error);
-          alert('Error al eliminar la cuenta');
-        });
+        this.userService.deleteUserById(user._id).subscribe(
+          () => {
+            const successDialog = this.dialog.open(ConfirmationModalComponent, {
+              width: '350px',
+              data: {
+                titulo: 'Cuenta eliminada',
+                mensaje: 'Tu cuenta ha sido eliminada correctamente.',
+                confirmable: false // Solo botón de cerrar
+              }
+            });
+  
+            successDialog.afterClosed().subscribe(() => {
+              this.userService.setUser(null); // Eliminar el usuario de localStorage
+              this.router.navigate(['/']); // Redirigir a la página de inicio
+            });
+          },
+          error => {
+            console.error('Error al eliminar la cuenta:', error);
+            const errorDialog = this.dialog.open(ConfirmationModalComponent, {
+              width: '350px',
+              data: {
+                titulo: 'Error',
+                mensaje: 'Hubo un error al intentar eliminar tu cuenta. Por favor, inténtalo nuevamente.',
+                confirmable: false // Solo botón de cerrar
+              }
+            });
+          }
+        );
       }
-
-    }
-  )
+    });
   }
 
   toggleAddProperty() {
@@ -181,27 +237,53 @@ export class UserdashboardComponent implements OnInit {
 
   addNewProperty() {
     if (!this.newProperty.address.trim()) {
-      alert('La dirección es obligatoria.');
-      return;
+      const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+        width: '350px',
+        data: { 
+          titulo: 'Error',
+          mensaje: 'La dirección es obligatoria.',
+          confirmable: false
+        }
+      });
+            return;
     }
-
+  
     const propertyData: IProperty = {
       ...this.newProperty,
       owner: this.user._id || '',
     };
-
+  
     this.propertyService.addProperty(propertyData).subscribe(
       () => {
-        alert('Propiedad añadida correctamente.');
-        this.listProperties();
-        this.cancelAddProperty();
+        // Mostrar modal informativo
+        const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+          width: '350px',
+          data: { 
+            titulo: 'Propiedad creada',
+            mensaje: `La propiedad en "${this.newProperty.address}" se ha añadido correctamente.`,
+            confirmable: false // Sin botón Confirmar
+          }
+        });
+  
+        dialogRef.afterClosed().subscribe(() => {
+          this.listProperties();
+          this.cancelAddProperty();
+        });
       },
       (error) => {
         console.error('Error al añadir la propiedad:', error);
-        alert('No se pudo añadir la propiedad.');
+        const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+          width: '350px',
+          data: { 
+            titulo: 'Error',
+            mensaje: 'No se pudo añadir la propiedad.',
+            confirmable: false
+          }
+        });
       }
     );
   }
+  
 
   cancelAddProperty() {
     this.addProperty = false;
@@ -218,15 +300,35 @@ export class UserdashboardComponent implements OnInit {
   
     this.propertyService.updateProperty(property).subscribe(
       () => {
-        alert('Propiedad actualizada correctamente.');
-        this.cancelEditProperty();
+        // Mostrar modal informativo
+        const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+          width: '350px',
+          data: {
+            titulo: 'Propiedad actualizada',
+            mensaje: `La propiedad en "${property.address}" se ha actualizado correctamente.`,
+            confirmable: false // Sin botón Confirmar
+          }
+        });
+  
+        dialogRef.afterClosed().subscribe(() => {
+          this.cancelEditProperty();
+        });
       },
       (error) => {
         console.error('Error al actualizar la propiedad:', error);
-        alert('No se pudo actualizar la propiedad.');
+        const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+          width: '350px',
+          data: { 
+            titulo: 'Error',
+            mensaje: 'No se pudo actualizar la propiedad.',
+            confirmable: false
+          }
+        });
       }
     );
   }
+  
+  
   
   cancelEditProperty(): void {
     this.editProperty = false;
@@ -237,22 +339,41 @@ export class UserdashboardComponent implements OnInit {
   deleteProperty(propertyId: string) {
     const dialogRef = this.dialog.open(ConfirmationModalComponent, {
       width: '350px',
-      data: { mensaje: '¿Estás seguro de que deseas eliminar esta propiedad?' },
+      data: {
+        titulo: 'Eliminar propiedad',
+        mensaje: '¿Estás seguro de que deseas eliminar esta propiedad?',
+        confirmable: true
+      },
     });
-
+  
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.propertyService.deleteProperty(propertyId).subscribe(
           () => {
-            alert('Propiedad eliminada correctamente.');
+            const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+              width: '350px',
+              data: { 
+                titulo: 'Eliminada',
+                mensaje: 'Propiedad eliminada correctamente.',
+                confirmable: false
+              }
+            });
+            
             this.listProperties();
           },
           (error) => {
             console.error('Error al eliminar la propiedad:', error);
-            alert('No se pudo eliminar la propiedad.');
+            const dialogRef = this.dialog.open(ConfirmationModalComponent, {
+              width: '350px',
+              data: { 
+                titulo: 'Error',
+                mensaje: 'No se pudo eliminar la propiedad.',
+                confirmable: false
+              }
+            });
           }
         );
       }
     });
-  }
+  }  
 }

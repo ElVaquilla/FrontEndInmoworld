@@ -11,12 +11,14 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class ConfirmationModalComponent {
   mensaje: string;
+  titulo: string;
 
   constructor(
     public dialogRef: MatDialogRef<ConfirmationModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.mensaje = data.mensaje;
+    this.titulo = data.titulo || 'Confirmación'; // Título por defecto
   }
 
   cancelar(): void {
@@ -27,3 +29,4 @@ export class ConfirmationModalComponent {
     this.dialogRef.close(true);
   }
 }
+

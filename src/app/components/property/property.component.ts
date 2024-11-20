@@ -128,38 +128,63 @@ property:any;
   // Manejar el envío del formulario con validación de campos
   onSubmit(propertyForm: NgForm): void {
     this.errorMessage = ''; // Limpiar mensajes de error
-
+  
     // Verificar si los campos están vacíos
     if (!this.newProperty.owner || !this.newProperty.address || !this.newProperty.description) {
       this.errorMessage = 'Todos los campos son obligatorios.';
       return;
     }
+  
     if (this.indiceEdicion !== null) {
+      // Actualizar la propiedad existente
       this.properties[this.indiceEdicion] = { ...this.newProperty, _id: this.properties[this.indiceEdicion]._id };
   
-      // Actualizar el usuario en la API
-      this.propertyService.updateProperty(this.properties[this.indiceEdicion]).subscribe(response => {
-        console.log('Usuario actualizado:', response);
-      
-      })
-      // Limpiar el estado de edición
-      this.indiceEdicion = null;
-    }else{
-
-      // Llamar al servicio para agregar la nueva property
-      this.propertyService.addProperty(this.newProperty).subscribe(
+      this.propertyService.updateProperty(this.properties[this.indiceEdicion]).subscribe(
         (response) => {
-          console.log('Property creada:', response);
-          this.getProperties(); // Actualizar la lista de properties después de crear una nueva
+          console.log('Propiedad actualizada:', response);
+  
+          // Mostrar modal de éxito
+          this.dialog.open(ConfirmationModalComponent, {
+            data: {
+              titulo: 'Actualización exitosa',
+              mensaje: 'La propiedad ha sido actualizada correctamente.',
+              confirmable: false // Solo botón de cerrar
+            }
+          });
+  
+          this.getProperties(); // Refrescar la lista
           this.resetForm(); // Limpiar el formulario
         },
         (error) => {
-          console.error('Error al crear la property:', error);
+          console.error('Error al actualizar la propiedad:', error);
+        }
+      );
+  
+      // Limpiar el estado de edición
+      this.indiceEdicion = null;
+    } else {
+      // Crear nueva propiedad
+      this.propertyService.addProperty(this.newProperty).subscribe(
+        (response) => {
+          console.log('Propiedad creada:', response);
+  
+          // Mostrar modal de éxito
+          this.dialog.open(ConfirmationModalComponent, {
+            data: {
+              titulo: 'Creación exitosa',
+              mensaje: 'La propiedad ha sido creada correctamente.',
+              confirmable: false // Solo botón de cerrar
+            }
+          });
+  
+          this.getProperties(); // Refrescar la lista
+          this.resetForm(); // Limpiar el formulario
+        },
+        (error) => {
+          console.error('Error al crear la propiedad:', error);
         }
       );
     }
-
-    this.resetForm();
   }
 
   prepararEdicion(property: IProperty, index: number): void{
@@ -173,24 +198,31 @@ property:any;
   deleteProperty(propertyId: string): void {
     const dialogRef = this.dialog.open(ConfirmationModalComponent, {
       width: '350px',
-      data: { mensaje: `¿Estás seguro de que deseas eliminar la propiedad?` }
+      data: { 
+        titulo: 'Confirmar eliminación', 
+        mensaje: '¿Estás seguro de que deseas eliminar esta propiedad?', 
+        confirmable: true // Esto activa los botones "Cerrar" y "Confirmar"
+      }
     });
+  
     dialogRef.afterClosed().subscribe(result => {
       if (result) { 
+        // Si el usuario confirma, eliminar la propiedad
         this.propertyService.deleteProperty(propertyId).subscribe(
           () => {
-           console.log(`Property con ID ${propertyId} eliminada`);
-            this.getProperties(); 
-         },
-         (error) => {
-            console.error('Error al eliminar la property:', error);
-         }
-       );
-     }
-   });
+            console.log(`Property con ID ${propertyId} eliminada`);
+            this.getProperties(); // Refrescar la lista de propiedades
+          },
+          (error) => {
+            console.error('Error al eliminar la propiedad:', error);
+          }
+        );
+      } else {
+        console.log('Eliminación cancelada por el usuario.');
+      }
+    });
   }
-
-
+  
   // Resetear el formulario después de crear una property
   resetForm(): void {
     this.newProperty = {

@@ -1,10 +1,14 @@
-<h1 mat-dialog-title>Confirmación</h1>
+<h1 mat-dialog-title>{{ titulo }}</h1>
 
 <mat-dialog-content>
   <p>{{ mensaje }}</p>
 </mat-dialog-content>
 
-<mat-dialog-actions align="end">
+<mat-dialog-actions align="end" *ngIf="data.confirmable">
   <button mat-button (click)="cancelar()">Cancelar</button>
   <button mat-button color="primary" (click)="confirmar()">Confirmar</button>
+</mat-dialog-actions>
+
+<mat-dialog-actions align="center" *ngIf="!data.confirmable">
+  <button mat-button color="primary" (click)="dialogRef.close()">Cerrar</button>
 </mat-dialog-actions>

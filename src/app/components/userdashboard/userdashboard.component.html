@@ -78,20 +78,45 @@
   <!-- Formulario para modificar usuario -->
   <div *ngIf="editUser" class="edit-user-form">
     <h2>Modificar Usuario</h2>
-    <form (ngSubmit)="updateUser()">
+    <form (ngSubmit)="updateUser()" #form="ngForm">
       <label for="newUsername">
         Nuevo Nombre:
         <input id="newUsername" type="text" [(ngModel)]="newUsername" name="newUsername" required />
       </label>
       <label for="newPassword">
         Nueva Contraseña:
-        <input id="newPassword" type="password" [(ngModel)]="newPassword" name="newPassword" required />
+        <input
+          id="newPassword"
+          type="password"
+          [(ngModel)]="newPassword"
+          name="newPassword"
+          required
+          minlength="7"
+          placeholder="Introduce una nueva contraseña"
+        />
+        <div *ngIf="form.controls['newPassword']?.invalid && form.controls['newPassword']?.touched" class="error-message">
+          La contraseña debe tener al menos 7 caracteres.
+        </div>
       </label>
       <label for="confirmPassword">
         Confirmar Contraseña:
-        <input id="confirmPassword" type="password" [(ngModel)]="confirmPassword" name="confirmPassword" required />
+        <input
+          id="confirmPassword"
+          type="password"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          required
+          minlength="7"
+          placeholder="Confirma tu nueva contraseña"
+        />
+        <div *ngIf="confirmPassword !== newPassword && confirmPassword.length > 0 && form.submitted" class="error-message">
+          Las contraseñas no coinciden.
+        </div>
+        <div *ngIf="form.controls['confirmPassword']?.invalid && form.controls['confirmPassword']?.touched" class="error-message">
+          La contraseña debe tener al menos 7 caracteres.
+        </div>
       </label>
-      <button type="submit">Guardar Cambios</button>
+      <button type="submit" [disabled]="form.invalid">Guardar Cambios</button>
       <button type="button" (click)="cancelEditUser()">Cancelar</button>
     </form>
   </div>
