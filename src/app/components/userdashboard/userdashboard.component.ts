@@ -123,7 +123,6 @@ export class UserdashboardComponent implements OnInit {
           confirmable: false
         }
       });
-      
       return;
     }
   
